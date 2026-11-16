@@ -1,87 +1,19 @@
-# BudgetControl Ms template
+# BudgetControl Sync
 
-This repository contains the code of microservice budgetcontrol template.
+Prototype for manual, read-only Enable Banking expense synchronization. The Gateway authenticates the caller and forwards trusted identity and workspace context. This service allows only `marco.defelice890@gmail.com` and owns the provider integration, authorization flow and connection records. Entries owns expense creation and atomic duplicate detection.
 
-## Prerequisites
+## Setup
 
-- Docker: [Install Docker](https://docs.docker.com/get-docker/)
-- Task: [Install Task](https://taskfile.dev/#/installation)
+1. Install PHP 8.1+, Composer dependencies, the cURL and OpenSSL extensions, and configure the shared PostgreSQL database. Copy `.env.example` to `.env`.
+2. Register an Enable Banking application for personal use, whitelist the bank accounts as required by the provider, and register the HTTPS callback `https://<app-host>/app/settings/open-banking`. Configure its application ID and mount its private key outside the repository. Set `ENABLE_BANKING_REDIRECT_URL` to exactly the registered URL.
+3. Generate a random 32-byte key, encode it with base64 and set `SYNC_ENCRYPTION_KEY`. Keep it stable and secret. Set `SECRET_KEY` to the Gateway `API_SECRET`. Set `ENTRY_API_BASE_URL` and an independent `ENTRY_SYNC_SECRET`; configure the same value as `SYNC_API_SECRET` in Entries. Keep Sync and Entries on an internal network.
+4. After the Schema Registry change has been released and the Composer dependency updated, run `vendor/bin/phinx migrate` against the same database used by Entries. The service uses the shared `ms_migrations` history. The schema registry migration creates `sync_imported_expenses`, which Entries writes atomically with an expense. Install a schema registry version containing `20261116000000_create_sync_tables.php` before running migrations. Deploy Entries, Sync, Gateway and PWA changes together.
+5. Configure `SYNC_API_BASE_URL` in Gateway and `VUE_APP_SUPPORT_EMAIL` in the PWA. Connect a bank in the wallet screen, choose the account and expense settings, and start a manual sync.
 
-## Getting Started
+Only booked debit transactions with a stable `entry_reference`, account identification hash and matching currency are imported. Transactions missing these fields are counted as skipped. Entries records a unique hash per workspace and bank account so repeated syncs and retry after a lost response do not duplicate imports. Entries already imported manually are not automatically matched. Existing bank connections are scoped to the user and workspace. Consent expiry requires a new connection. American Express is not supported by this integration.
 
-1. Clone this repository:
+No provider credentials, tokens, authorization codes, transaction payloads or sensitive request headers should be logged. Back up the database and encryption key together. Do not expose the service directly to the Internet. Enable Banking credentials and approved account access are required for a live run.
 
-    ```bash
-    git clone https://github.com/your-repository
-    ```
+## Checks
 
-2. Build and run the Docker containers:
-
-    ```bash
-    task build:dev
-    ```
-
-5. Open your browser and visit [http://localhost:8084](http://localhost:8084) to access the BudgetControl application.
-
-## Task Commands
-
-- `task build:dev`: Install and build dev application.
-- `task build`: Install and build base application.
-
-### Test with FTP
-
-You can use an fake ftp docker server
-- docker run --rm -d --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e FTP_USER_NAME=user -e FTP_USER_PASS=12345 -e FTP_USER_HOME=/home/user stilliard/pure-ftpd
-- docker network connect [network_name] ftpd_server
-
-## Build dev enviroment
-- docker-compose -f docker-compose.yml -f -f docker-compose.db.yml up -d
-- docker container cp bin/apache/default.conf budgetcontrol-ms-authentication:/etc/apache2/sites-available/budgetcontrol.cloud.conf
-- docker container exec budgetcontrol-ms-authentication service apache2 restart
-
-### Test with mailhog service
-
-You can use an fake mailhog server
-- docker run --rm -d --name mailhog -p 8025:8025 -p 1025:1025 mailhog/mailhog
-- docker network connect [network_name] mailhog
-
-## Run PHP Tests
-- docker exec budgetcontrol-ms-authentication bash -c "vendor/bin/phinx rollback -t 0 && vendor/bin/phinx migrate && vendor/bin/phinx seed:run" 
-- docker exec budgetcontrol-ms-authentication vendor/bin/phpunit test
-
-## Contributing
-
-Contributions are welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) for more information.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Debug
-```bash
-{
-    // Usare IntelliSense per informazioni sui possibili attributi.
-    // Al passaggio del mouse vengono visualizzate le descrizioni degli attributi esistenti.
-    // Per altre informazioni, visitare: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Listen for Remote Xdebug",
-            "type": "php",
-            "request": "launch",
-            "port": 9003,
-            "pathMappings": {
-                "/var/www/workdir": "${workspaceRoot}",
-            },
-            "log": true, 
-        },
-    ]
-}
-```
-
-## Usin Bref for deploy serverless
-- Add bref to composer composer require bref/bref:~2.4.1
-- Install serveless globally npm install -g serverless
-- Install plugin npm install serverless-dotenv-plugin
-- If nedded more php extension edit /php/conf.d/php.ini file
-- Run serverless deploy --stage dev | prod
+Run `php Test/ManualSyncCheck.php` for eligibility, authorization replay, pagination and sync mapping checks. In Entries, run `php test/Integration/SyncExpenseCheck.php` for duplicate handling and transaction rollback. These checks use SQLite and simulated bank responses; a real provider connection requires the registered application and whitelisted accounts.

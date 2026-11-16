@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc3b2910aa8853efe98241c9b3165cdb",
+    "content-hash": "ab1ab75b58f02ecca845739506ce9903",
     "packages": [
         {
             "name": "bref/bref",
@@ -183,16 +183,16 @@
         },
         {
             "name": "budgetcontrol/schema-registry-service",
-            "version": "v1.0-beta",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BudgetControl/Schema-Registry-Service.git",
-                "reference": "01466280c3f20acec2167bee44562285e8e93751"
+                "reference": "519464855e04c82a70f621e318b6d5f53a7879ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BudgetControl/Schema-Registry-Service/zipball/01466280c3f20acec2167bee44562285e8e93751",
-                "reference": "01466280c3f20acec2167bee44562285e8e93751",
+                "url": "https://api.github.com/repos/BudgetControl/Schema-Registry-Service/zipball/519464855e04c82a70f621e318b6d5f53a7879ec",
+                "reference": "519464855e04c82a70f621e318b6d5f53a7879ec",
                 "shasum": ""
             },
             "type": "library",
@@ -209,10 +209,10 @@
             ],
             "description": "An API Schema Registry is a centralized service that manages and distributes database schema definitions",
             "support": {
-                "source": "https://github.com/BudgetControl/Schema-Registry-Service/tree/v1.0-beta",
+                "source": "https://github.com/BudgetControl/Schema-Registry-Service/tree/v1.5.1",
                 "issues": "https://github.com/BudgetControl/Schema-Registry-Service/issues"
             },
-            "time": "2024-08-06T13:26:32+00:00"
+            "time": "2025-08-11T13:03:17+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -7509,7 +7509,10 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

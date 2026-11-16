@@ -11,13 +11,14 @@ return [
         'default_migration_table' => 'ms_migrations',
         'default_environment' => 'development',
         'development' => [
-            'adapter'   => env('DB_CONNECTION','mysql'),
+            'adapter'   => env('DB_CONNECTION','pgsql'),
             'host' => env('DB_HOST'),
             'name' => env('DB_DATABASE'),
             'user' => env('DB_USERNAME'),
             'pass' => env('DB_PASSWORD'),
             'charset'  => 'utf8',
-            'port' => env('DB_PORT')
+            'port' => env('DB_PORT', 5432),
+            'schema' => env('DB_SCHEMA', 'public')
         ],
     ],
 ];

@@ -1,43 +1,19 @@
-version: '2.2'
-
 services:
-    database:
-      container_name: budgetcontrol-db
-      image: mysql:5.7
-      restart: unless-stopped
-      ports:
-        - "3336:3306"
-      environment:
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_USER: ${MYSQL_USERNAME}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-      volumes:
-        - mysql_persistent:/var/lib/mysql
-      networks:
-        - budgetcontrol_network
-
-    cache:
-      container_name: budgetcontrol-redis
-      image: redis:7.2-rc2-alpine
-      restart: always
-      ports:
-        - '6379:6379'
-      command: redis-server --save 20 1 --loglevel warning --requirepass ${CACHE_REDIS_PASSWORD}
-      volumes:
-        - cache:/data
-      networks:
-        - budgetcontrol_network
-        
+  database:
+    container_name: budgetcontrol-sync-db
+    image: postgres:13.18
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "5433:5432"
+    volumes:
+      - sync_pgdata:/var/lib/postgresql/data
+    networks:
+      - budgetcontrol_network
 volumes:
-  mysql_persistent:
-    name: budgetcontrol_core_database
-    external: false
-  cache:
-    name: budgetcontrol_core_cache
-    external: false
-
+  sync_pgdata:
 networks:
   budgetcontrol_network:
-    external: false
-    name: budgetcontrol_network
+    external: true

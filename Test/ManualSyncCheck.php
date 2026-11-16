@@ -1,0 +1,71 @@
+<?php
+// Run with: php Test/ManualSyncCheck.php
+require __DIR__ . '/../vendor/autoload.php';
+
+use Budgetcontrol\Sync\Http\Controller\SyncController;
+use Budgetcontrol\Sync\Service\EnableBanking;
+use Budgetcontrol\Sync\Service\SyncService;
+use Illuminate\Database\Capsule\Manager as DB;
+use Slim\Psr7\Factory\ServerRequestFactory;
+use Slim\Psr7\Response;
+
+function check(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); }
+final class FakeBank extends EnableBanking
+{
+    public string $state = '';
+    public array $queries = [];
+    public function request(string $method, string $path, array $data = []): array
+    {
+        if ($path === '/aspsps') return ['aspsps' => [['name' => 'BBVA', 'country' => 'IT', 'maximum_consent_validity' => 86400], ['name' => 'Another Bank', 'country' => 'IT']]];
+        if ($path === '/auth') { $this->state = $data['state']; check(strtotime($data['access']['valid_until']) <= time() + 86400, 'consent duration'); return ['url' => 'https://example.com/authorize']; }
+        if ($path === '/sessions') return ['session_id' => 'session-secret', 'access' => ['valid_until' => gmdate('c', time()+86400)], 'accounts' => [['uid' => 'account-1', 'identification_hash' => 'stable-account', 'name' => 'BBVA', 'currency' => 'EUR']]];
+        if ($path === '/accounts/account-1/transactions') {
+            $this->queries[] = $data;
+            if (empty($data['continuation_key'])) return ['transactions' => [], 'continuation_key' => 'next'];
+            $base = ['status'=>'BOOK', 'credit_debit_indicator'=>'DBIT', 'transaction_amount'=>['amount'=>'12.50', 'currency'=>'EUR'], 'booking_date'=>'2026-01-01'];
+            return ['transactions' => [$base + ['entry_reference'=>'a'], $base, array_replace($base, ['entry_reference'=>'credit', 'credit_debit_indicator'=>'CRDT'])]];
+        }
+        throw new RuntimeException('Unexpected provider request');
+    }
+}
+final class TestSync extends SyncService
+{
+    public array $imported = [];
+    protected function importExpense(int $workspaceId, array $expense): string
+    {
+        check($workspaceId === 7 && $expense['amount'] === '-12.50', 'expense mapping');
+        if (isset($this->imported[$expense['source_hash']])) return 'duplicate';
+        $this->imported[$expense['source_hash']] = true;
+        return 'created';
+    }
+}
+$_ENV['SYNC_ENCRYPTION_KEY'] = base64_encode(str_repeat('k', 32));
+$_ENV['ENABLE_BANKING_REDIRECT_URL'] = 'https://example.com/app/settings/open-banking';
+$db = new DB(); $db->addConnection(['driver'=>'sqlite', 'database'=>':memory:', 'prefix'=>'']); $db->setAsGlobal(); $db->bootEloquent();
+$schema = $db->schema();
+$schema->create('sync_authorizations', function($t) { $t->string('state_hash')->primary(); $t->string('user_uuid'); $t->integer('workspace_id'); $t->string('expires_at'); });
+$schema->create('sync_connections', function($t) { $t->increments('id'); $t->string('user_uuid'); $t->integer('workspace_id'); $t->text('session_ciphertext'); $t->text('accounts_json'); $t->string('valid_until')->nullable(); $t->string('created_at'); });
+$schema->create('wallets', function($t) { $t->increments('id'); $t->integer('workspace_id'); $t->string('currency'); $t->softDeletes(); });
+DB::table('wallets')->insert(['id'=>1, 'workspace_id'=>7, 'currency'=>'2']);
+$schema->create('currencies', function($t) { $t->increments('id'); $t->string('label'); });
+DB::table('currencies')->insert(['id'=>2, 'label'=>'EUR']);
+$controller = new SyncController(); $factory = new ServerRequestFactory();
+$other = $factory->createServerRequest('POST','/')->withParsedBody(['identity'=>['email'=>'other@example.com']]);
+$eligible = $controller->handle($other,new Response(),['action'=>'eligibility']);
+check(json_decode((string)$eligible->getBody(),true)['eligible'] === false, 'other user eligibility');
+check($controller->handle($other,new Response(),['action'=>'sync'])->getStatusCode() === 403, 'other user access');
+$owner = $other->withParsedBody(['identity'=>['email'=>'marco.defelice890@gmail.com']]);
+check(json_decode((string)$controller->handle($owner,new Response(),['action'=>'eligibility'])->getBody(),true)['eligible'] === true, 'owner eligibility');
+$bank = new FakeBank(); $service = new TestSync($bank); $context = ['user_uuid'=>'user-1','workspace_id'=>7];
+check(count($service->banks()['banks']) === 1, 'bank filtering');
+$service->start($context, ['bank'=>'BBVA']);
+$service->complete($context, ['state'=>$bank->state, 'code'=>'authorization-code']);
+try { $service->complete($context, ['state'=>$bank->state, 'code'=>'authorization-code']); throw new RuntimeException('state replay accepted'); } catch (InvalidArgumentException $e) {}
+check(!str_contains(DB::table('sync_connections')->first()->session_ciphertext, 'session-secret'), 'session is encrypted');
+$input = ['connection_id'=>1, 'account_uid'=>'account-1', 'account_id'=>1, 'category_id'=>1, 'currency_id'=>2, 'payment_type'=>1, 'date_from'=>'2026-01-01'];
+$first = $service->sync($context,$input); $second = $service->sync($context,$input);
+check($first === ['imported'=>1,'duplicates'=>0,'skipped'=>1], 'first sync');
+check($second === ['imported'=>0,'duplicates'=>1,'skipped'=>1], 'repeat sync');
+check($bank->queries[1]['date_from'] === $bank->queries[0]['date_from'] && $bank->queries[1]['continuation_key'] === 'next', 'pagination');
+try { $service->sync(['user_uuid'=>'someone-else','workspace_id'=>7],$input); throw new RuntimeException('cross-user connection accepted'); } catch (InvalidArgumentException $e) {}
+echo "Eligibility, consent, replay, encryption, pagination, sync and scope checks passed\n";

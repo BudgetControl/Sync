@@ -1,36 +1,10 @@
 <?php
-
-// ##### APPLICATION MIDDLEWARE ######
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
-
-/**
- * error middleware
- */
-$errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
-$errorMiddleware->setDefaultErrorHandler(function (\Slim\Http\ServerRequest $request, Throwable $e) use ($logger, $app) {
-
-    $procId = uniqid();
-    $logger->error($e, [
-        'request' => $_SERVER['REQUEST_URI'],
-        'procid' => $procId
-    ]);
-
-    $statusError = [
-        'id' => $procId,
-        'status' => empty($e->getCode()) ? 500 : $e->getCode(),
-        'detail' => $e->getMessage()
-    ];
-
-    $payload = ['error' => $statusError];
-    if (env("APP_DEBUG") == "true") {
-        $payload['error']['trace'] = $e->getTrace();
-    }
-
-    $code = (int) $e->getCode();
-    if ($code < 100 || $code > 599) {
-        $code = 500;
-    }
-
-    return response($payload, $code);
+$errorMiddleware = $app->addErrorMiddleware(false, true, true, $logger);
+$errorMiddleware->setDefaultErrorHandler(function ($request, Throwable $e) use ($logger) {
+    // Do not log request bodies, bank data, authorization codes or provider responses.
+    $logger->error('Sync request failed', ['type' => get_class($e)]);
+    $status = in_array($e->getCode(), [400, 403, 404, 409, 422, 503], true) ? $e->getCode() : 500;
+    return response(['error' => $status === 500 ? 'Synchronization failed' : $e->getMessage()], $status);
 });
