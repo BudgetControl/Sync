@@ -41,7 +41,25 @@ final class TestSync extends SyncService
 }
 $_ENV['SYNC_ENCRYPTION_KEY'] = base64_encode(str_repeat('k', 32));
 $_ENV['ENABLE_BANKING_REDIRECT_URL'] = 'https://example.com/app/settings/open-banking';
-$db = new DB(); $db->addConnection(['driver'=>'sqlite', 'database'=>':memory:', 'prefix'=>'']); $db->setAsGlobal(); $db->bootEloquent();
+$db = new DB();
+if (getenv('SYNC_TEST_DB_DRIVER') === 'pgsql') {
+    $database = getenv('SYNC_TEST_DB_DATABASE');
+    if (!$database) throw new RuntimeException('SYNC_TEST_DB_DATABASE is required');
+    $db->addConnection([
+        'driver' => 'pgsql',
+        'host' => getenv('SYNC_TEST_DB_HOST') ?: '127.0.0.1',
+        'port' => getenv('SYNC_TEST_DB_PORT') ?: '5432',
+        'database' => $database,
+        'username' => getenv('SYNC_TEST_DB_USERNAME'),
+        'password' => getenv('SYNC_TEST_DB_PASSWORD'),
+        'charset' => 'utf8',
+        'schema' => 'public',
+        'prefix' => '',
+    ]);
+} else {
+    $db->addConnection(['driver'=>'sqlite', 'database'=>':memory:', 'prefix'=>'']);
+}
+$db->setAsGlobal(); $db->bootEloquent();
 $schema = $db->schema();
 $schema->create('sync_authorizations', function($t) { $t->string('state_hash')->primary(); $t->string('user_uuid'); $t->integer('workspace_id'); $t->string('expires_at'); });
 $schema->create('sync_connections', function($t) { $t->increments('id'); $t->string('user_uuid'); $t->integer('workspace_id'); $t->text('session_ciphertext'); $t->text('accounts_json'); $t->string('valid_until')->nullable(); $t->string('created_at'); });

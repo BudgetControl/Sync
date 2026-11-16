@@ -16,4 +16,10 @@ No provider credentials, tokens, authorization codes, transaction payloads or se
 
 ## Checks
 
-Run `php Test/ManualSyncCheck.php` for eligibility, authorization replay, pagination and sync mapping checks. In Entries, run `php test/Integration/SyncExpenseCheck.php` for duplicate handling and transaction rollback. These checks use SQLite and simulated bank responses; a real provider connection requires the registered application and whitelisted accounts.
+Run `php Test/ManualSyncCheck.php` for eligibility, authorization replay, pagination and sync mapping checks. In Entries, run `php test/Integration/SyncExpenseCheck.php` for duplicate handling and transaction rollback. By default the Sync check uses SQLite; the GitHub Actions workflow runs it against an isolated PostgreSQL service. The checks use simulated bank responses; a real provider connection requires the registered application and whitelisted accounts.
+
+## GitHub Actions
+
+Pull requests to `main` and `develop` run the Sync checks against PostgreSQL. A push to `main` (or a manual production deployment) runs the same checks before deploying to the `prod` environment. A push to `develop` or a manual development deployment uses the `dev` environment and the same checks. Configure its `SFTP_USER`, `SFTP_HOST`, `SFTP_PORT`, `SFTP_PATH`, `SFTP_PASSWORD` and/or `SSH_PRIVATE_KEY` secrets for the Sync installation and ensure the host already has the `budgetcontrol-ms-sync` container and its private runtime configuration.
+
+Version tags matching `v*.*.*`, or a manual run, build and push `${DOCKER_USERNAME}/sync:<ref>` using the `docker-prod` environment and its `DOCKER_USERNAME` and `DOCKER_PASSWORD` secrets. A manually triggered image build requires an explicit Docker image tag. All image builds run the same PostgreSQL checks first. The production workflow does not run database migrations; release the Schema Registry and migrate PostgreSQL separately before deploying code that depends on the new tables.
