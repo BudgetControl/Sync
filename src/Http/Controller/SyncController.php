@@ -7,6 +7,16 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 final class SyncController
 {
+    public function scheduled(Request $request, Response $response): Response
+    {
+        $secret = (string) env('SYNC_JOB_SECRET', '');
+        if ($secret === '' || !hash_equals($secret, $request->getHeaderLine('X-Sync-Job-Secret'))) {
+            return response(['error' => 'Forbidden'], 403);
+        }
+        $result = (new SyncService())->runScheduled();
+        return response($result, $result['failed'] ? 503 : 200);
+    }
+
     public function monitor(Request $request, Response $response): Response
     {
         return response(['success' => true, 'message' => 'Sync service is running']);
