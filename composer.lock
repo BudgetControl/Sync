@@ -183,17 +183,20 @@
         },
         {
             "name": "budgetcontrol/schema-registry-service",
-            "version": "v1.5.1",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BudgetControl/Schema-Registry-Service.git",
-                "reference": "519464855e04c82a70f621e318b6d5f53a7879ec"
+                "reference": "197c546aa1a738f1c0f2045eb2fe566595bdba8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BudgetControl/Schema-Registry-Service/zipball/519464855e04c82a70f621e318b6d5f53a7879ec",
-                "reference": "519464855e04c82a70f621e318b6d5f53a7879ec",
+                "url": "https://api.github.com/repos/BudgetControl/Schema-Registry-Service/zipball/197c546aa1a738f1c0f2045eb2fe566595bdba8f",
+                "reference": "197c546aa1a738f1c0f2045eb2fe566595bdba8f",
                 "shasum": ""
+            },
+            "require": {
+                "robmorgan/phinx": "^0.16.2"
             },
             "type": "library",
             "autoload": {
@@ -209,10 +212,10 @@
             ],
             "description": "An API Schema Registry is a centralized service that manages and distributes database schema definitions",
             "support": {
-                "source": "https://github.com/BudgetControl/Schema-Registry-Service/tree/v1.5.1",
+                "source": "https://github.com/BudgetControl/Schema-Registry-Service/tree/v1.5.3",
                 "issues": "https://github.com/BudgetControl/Schema-Registry-Service/issues"
             },
-            "time": "2025-08-11T13:03:17+00:00"
+            "time": "2026-11-16T15:55:19+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -7502,7 +7505,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "budgetcontrol/schema-registry-service": 10,
         "budgetcontrol/seeds": 10,
         "mlabfactory/phpunit-self-api-integration": 10
     },
@@ -7515,5 +7517,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
