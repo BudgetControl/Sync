@@ -3,6 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Budgetcontrol\Sync\Http\Controller\SyncController;
+use Budgetcontrol\Sync\Service\CategoryClassifier;
 use Budgetcontrol\Sync\Service\EnableBanking;
 use Budgetcontrol\Sync\Service\SyncService;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -24,7 +25,7 @@ final class FakeBank extends EnableBanking
         if ($path === '/accounts/account-1/transactions') {
             $this->queries[] = $data;
             if (empty($data['continuation_key'])) return ['transactions' => [], 'continuation_key' => 'next'];
-            $base = ['status'=>'BOOK', 'credit_debit_indicator'=>'DBIT', 'transaction_amount'=>['amount'=>'12.50', 'currency'=>'EUR'], 'booking_date'=>'2026-01-01'];
+            $base = ['status'=>'BOOK', 'credit_debit_indicator'=>'DBIT', 'transaction_amount'=>['amount'=>'12.50', 'currency'=>'EUR'], 'booking_date'=>'2026-01-01', 'remittance_information'=>['Ristorante da Mario']];
             return ['transactions' => [$base + ['entry_reference'=>'a'], $base, array_replace($base, ['entry_reference'=>'credit', 'credit_debit_indicator'=>'CRDT'])]];
         }
         throw new RuntimeException('Unexpected provider request');
@@ -37,7 +38,7 @@ final class TestSync extends SyncService
     {
         check($workspaceId === 7 && in_array($expense['amount'], ['-12.50', '12.50'], true), 'transaction mapping');
         if (isset($this->imported[$expense['source_hash']])) return 'duplicate';
-        $this->imported[$expense['source_hash']] = true;
+        $this->imported[$expense['source_hash']] = $expense;
         return 'created';
     }
 }
@@ -67,14 +68,22 @@ $schema->create('sync_authorizations', function($t) { $t->string('state_hash')->
 $schema->create('sync_connections', function($t) { $t->increments('id'); $t->string('user_uuid'); $t->integer('workspace_id'); $t->text('session_ciphertext'); $t->text('accounts_json'); $t->string('valid_until')->nullable(); $t->string('created_at'); });
 $schema->create('wallets', function($t) { $t->increments('id'); $t->integer('workspace_id'); $t->string('currency'); $t->decimal('balance', 10, 2)->default(0); $t->softDeletes(); });
 DB::table('wallets')->insert(['id'=>1, 'workspace_id'=>7, 'currency'=>'2']);
-$schema->create('sub_categories', function($t) { $t->increments('id'); $t->softDeletes(); });
-DB::table('sub_categories')->insert(['id'=>1]);
+$schema->create('categories', function($t) { $t->increments('id'); $t->string('name'); $t->string('type'); $t->softDeletes(); });
+DB::table('categories')->insert(['id'=>1, 'name'=>'Food & Beverages', 'type'=>'expenses']);
+$schema->create('sub_categories', function($t) { $t->increments('id'); $t->integer('category_id'); $t->string('name'); $t->string('slug'); $t->softDeletes(); });
+DB::table('sub_categories')->insert([
+    ['id'=>1, 'category_id'=>1, 'name'=>'other', 'slug'=>'other'],
+    ['id'=>2, 'category_id'=>1, 'name'=>'restaurants & fast food', 'slug'=>'restaurants_fast_food'],
+]);
 $schema->create('sync_account_settings', function($t) { $t->increments('id'); $t->integer('connection_id'); $t->string('account_uid'); $t->string('user_uuid'); $t->integer('workspace_id'); $t->integer('account_id'); $t->integer('category_id'); $t->integer('income_category_id'); $t->integer('currency_id'); $t->integer('payment_type'); $t->string('date_from'); $t->string('updated_at'); });
 $schema->create('entries', function($t) { $t->increments('id'); $t->string('uuid'); $t->integer('workspace_id'); $t->integer('category_id'); $t->string('type'); $t->softDeletes(); });
 $schema->create('entries_keywords', function($t) { $t->increments('id'); $t->integer('entry_id'); $t->text('keyword'); });
 $schema->create('sync_imported_expenses', function($t) { $t->integer('workspace_id'); $t->string('entry_uuid'); });
 $schema->create('currencies', function($t) { $t->increments('id'); $t->string('label'); });
 DB::table('currencies')->insert(['id'=>2, 'label'=>'EUR']);
+$categoryClassifier = new CategoryClassifier();
+check($categoryClassifier->classify('restaurant payment', 'expenses') === 2, 'English restaurant description is classified as restaurants');
+check($categoryClassifier->classify('Ristoranti Roma', 'expenses') === 2, 'Italian plural restaurant description is classified as restaurants');
 $controller = new SyncController(); $factory = new ServerRequestFactory();
 $other = $factory->createServerRequest('POST','/')->withParsedBody(['identity'=>['email'=>'other@example.com']]);
 $eligible = $controller->handle($other,new Response(),['action'=>'eligibility']);
@@ -92,6 +101,7 @@ $input = ['connection_id'=>1, 'account_uid'=>'account-1', 'account_id'=>1, 'cate
 $first = $service->sync($context,$input); $second = $service->sync($context,$input);
 check($first === ['imported'=>2,'duplicates'=>0,'skipped'=>1,'balance_updated'=>true], 'first sync');
 check($second === ['imported'=>0,'duplicates'=>2,'skipped'=>1,'balance_updated'=>true], 'repeat sync');
+check(array_values($service->imported)[0]['category_id'] === 2, 'Italian restaurant description is classified as restaurants');
 check((float) DB::table('wallets')->where('id', 1)->value('balance') === 0.17, 'bank balance aligned');
 $bank->balances[0]['reference_date'] = '2020-01-01';
 $bank->balances[0]['balance_amount']['amount'] = '3.50';

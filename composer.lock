@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab1ab75b58f02ecca845739506ce9903",
+    "content-hash": "f67bc7bdb50f3c57f582a7251a207e91",
     "packages": [
         {
             "name": "bref/bref",
@@ -216,6 +216,522 @@
                 "issues": "https://github.com/BudgetControl/Schema-Registry-Service/issues"
             },
             "time": "2026-11-17T09:05:51+00:00"
+        },
+        {
+            "name": "byjg/anydataset",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-anydataset.git",
+                "reference": "29667a59eb9b451327b3438f857410195374b1fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-anydataset/zipball/29667a59eb9b451327b3438f857410195374b1fb",
+                "reference": "29667a59eb9b451327b3438f857410195374b1fb",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/serializer": "^6.0",
+                "byjg/xmlutil": "^6.0",
+                "ext-dom": "*",
+                "php": ">=8.3 <8.6"
+            },
+            "provide": {
+                "byjg/anydataset-implementation": "1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\AnyDataset\\Core\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "AnyDataset is a powerful data source abstraction layer for PHP that provides a simple and consistent interface to access different data sources. With AnyDataset, you can work with various data formats and storage systems using the same programming interface.",
+            "support": {
+                "issues": "https://github.com/byjg/php-anydataset/issues",
+                "source": "https://github.com/byjg/php-anydataset/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-25T03:57:38+00:00"
+        },
+        {
+            "name": "byjg/anydataset-db",
+            "version": "6.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-anydataset-db.git",
+                "reference": "71953424029b9a4604d879931c28498a0591c1f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-anydataset-db/zipball/71953424029b9a4604d879931c28498a0591c1f1",
+                "reference": "71953424029b9a4604d879931c28498a0591c1f1",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/anydataset": "^6.0",
+                "byjg/uri": "^6.0",
+                "ext-json": "*",
+                "ext-pdo": "*",
+                "php": ">=8.3 <8.6",
+                "psr/cache": "^1.0|^2.0|^3.0",
+                "psr/log": "^1.1|^2.0|^3.0"
+            },
+            "provide": {
+                "byjg/anydataset-implementation": "1.0"
+            },
+            "require-dev": {
+                "byjg/cache-engine": "^6.0",
+                "phpunit/phpunit": "^10.5|^11.5|^12.3",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "suggest": {
+                "byjg/cache-engine": "^6.0",
+                "ext-curl": "*",
+                "ext-oci8": "*",
+                "ext-pdo_mysql": "*",
+                "ext-pdo_pgsql": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\AnyDataset\\Db\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "AnyDataset-DB provides a relational database abstraction layer. It is part of the Anydataset project, an agnostic data source abstraction layer for PHP.",
+            "support": {
+                "issues": "https://github.com/byjg/php-anydataset-db/issues",
+                "source": "https://github.com/byjg/php-anydataset-db/tree/6.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-07-01T14:49:32+00:00"
+        },
+        {
+            "name": "byjg/anydataset-xml",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-anydataset-xml.git",
+                "reference": "07b466affd8d098e2626384cbfcf66ada33afd06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-anydataset-xml/zipball/07b466affd8d098e2626384cbfcf66ada33afd06",
+                "reference": "07b466affd8d098e2626384cbfcf66ada33afd06",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/anydataset": "^6.0",
+                "ext-dom": "*",
+                "php": ">=8.3 <8.6"
+            },
+            "provide": {
+                "byjg/anydataset-implementation": "1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\AnyDataset\\Xml\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "XML abstraction dataset for the AnyDataset library. AnyDataset is an agnostic data source abstraction layer in PHP.",
+            "support": {
+                "issues": "https://github.com/byjg/php-anydataset-xml/issues",
+                "source": "https://github.com/byjg/php-anydataset-xml/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-24T18:05:06+00:00"
+        },
+        {
+            "name": "byjg/llm-api-objects",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-llm-api-objects.git",
+                "reference": "e588e4bf82186b0ee1b58ad426c4309643f96798"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-llm-api-objects/zipball/e588e4bf82186b0ee1b58ad426c4309643f96798",
+                "reference": "e588e4bf82186b0ee1b58ad426c4309643f96798",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/anydataset-xml": "^6.0",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "openai-php/client": "^v0.19",
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\LlmApiObjects\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Strongly-typed PHP objects for LLM API request payloads",
+            "support": {
+                "issues": "https://github.com/byjg/php-llm-api-objects/issues",
+                "source": "https://github.com/byjg/php-llm-api-objects/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-06T00:57:04+00:00"
+        },
+        {
+            "name": "byjg/micro-orm",
+            "version": "6.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-micro-orm.git",
+                "reference": "fb18909b48801081e3f84908f2f6f8d66f974b33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-micro-orm/zipball/fb18909b48801081e3f84908f2f6f8d66f974b33",
+                "reference": "fb18909b48801081e3f84908f2f6f8d66f974b33",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/anydataset-db": "^6.0",
+                "ext-json": "*",
+                "ext-pdo": "*",
+                "php": ">=8.3 <8.6"
+            },
+            "require-dev": {
+                "byjg/cache-engine": "^6.0",
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "ext-pdo_mysql": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\MicroOrm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A micro framework for create a very simple decoupled ORM. This library intended to be very small and very simple to use",
+            "support": {
+                "issues": "https://github.com/byjg/php-micro-orm/issues",
+                "source": "https://github.com/byjg/php-micro-orm/tree/6.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-07-01T14:50:34+00:00"
+        },
+        {
+            "name": "byjg/migration",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-migration.git",
+                "reference": "f0ea79307b4ad4c914652e6f77d588019ed73b58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-migration/zipball/f0ea79307b4ad4c914652e6f77d588019ed73b58",
+                "reference": "f0ea79307b4ad4c914652e6f77d588019ed73b58",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/anydataset-db": "^6.0",
+                "ext-pdo": "*",
+                "php": ">=8.3 <8.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^6.13"
+            },
+            "bin": [
+                "bin/migrate"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\DbMigration\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A simple, framework-agnostic database migration tool that uses pure SQL commands for versioning your database.",
+            "support": {
+                "issues": "https://github.com/byjg/php-migration/issues",
+                "source": "https://github.com/byjg/php-migration/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-25T03:10:48+00:00"
+        },
+        {
+            "name": "byjg/serializer",
+            "version": "6.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-serializer.git",
+                "reference": "735f52d5c6e5d6223962fdb50ad230971e35adbb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-serializer/zipball/735f52d5c6e5d6223962fdb50ad230971e35adbb",
+                "reference": "735f52d5c6e5d6223962fdb50ad230971e35adbb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-simplexml": "*",
+                "php": ">=8.3 <8.6",
+                "symfony/yaml": "> 4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\Serializer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A powerful multi-format serialization library that converts objects, arrays, and data between JSON, XML, YAML, CSV, PHP serialize, and plain text formats with intelligent property mapping and transformation",
+            "support": {
+                "issues": "https://github.com/byjg/php-serializer/issues",
+                "source": "https://github.com/byjg/php-serializer/tree/6.0.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-07-01T14:15:11+00:00"
+        },
+        {
+            "name": "byjg/text-classifier",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-text-classifier.git",
+                "reference": "c41ef9829dd51db559d4338f1cb16893258d4d97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-text-classifier/zipball/c41ef9829dd51db559d4338f1cb16893258d4d97",
+                "reference": "c41ef9829dd51db559d4338f1cb16893258d4d97",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/llm-api-objects": "^6.0",
+                "byjg/micro-orm": "^6.0",
+                "byjg/migration": "^6.0",
+                "nyholm/psr7": "^1.8",
+                "openai-php/client": "^0.19",
+                "php": ">=8.3 <8.6",
+                "symfony/http-client": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "ext-dba": "*",
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "suggest": {
+                "ext-dba": "*",
+                "ext-mbstring": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\TextClassifier\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A PHP text classifier supporting binary spam filtering (Robinson-Fisher Bayesian) and multi-class Naive Bayes classification, with optional LLM-assisted active learning fallback.",
+            "homepage": "https://github.com/byjg/b8",
+            "keywords": [
+                "active-learning",
+                "bayesian",
+                "classification",
+                "filter",
+                "llm",
+                "naive-bayes",
+                "spam",
+                "text-classifier"
+            ],
+            "support": {
+                "issues": "https://github.com/byjg/php-text-classifier/issues",
+                "source": "https://github.com/byjg/php-text-classifier/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-07T17:51:43+00:00"
+        },
+        {
+            "name": "byjg/uri",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-uri.git",
+                "reference": "5a749946ebde62d142f345c02ff62b472d2c97dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-uri/zipball/5a749946ebde62d142f345c02ff62b472d2c97dc",
+                "reference": "5a749946ebde62d142f345c02ff62b472d2c97dc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.3 <8.6",
+                "psr/http-message": "^1.0|^1.1|^2.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\Util\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A PHP implementation of PSR-7 UriInterface with additional utility methods",
+            "support": {
+                "issues": "https://github.com/byjg/php-uri/issues",
+                "source": "https://github.com/byjg/php-uri/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-25T17:47:41+00:00"
+        },
+        {
+            "name": "byjg/xmlutil",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byjg/php-xmlutil.git",
+                "reference": "ae005cd5edfd223c3ab9ceaf50c12261b27178f0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byjg/php-xmlutil/zipball/ae005cd5edfd223c3ab9ceaf50c12261b27178f0",
+                "reference": "ae005cd5edfd223c3ab9ceaf50c12261b27178f0",
+                "shasum": ""
+            },
+            "require": {
+                "byjg/serializer": "^6.0",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-simplexml": "*",
+                "php": ">=8.3 <8.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ByJG\\XmlUtil\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A powerful and intuitive PHP library for working with XML documents. This utility makes XML manipulation, querying, and conversion simple and straightforward in PHP.",
+            "support": {
+                "issues": "https://github.com/byjg/php-xmlutil/issues",
+                "source": "https://github.com/byjg/php-xmlutil/tree/6.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/byjg",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-22T05:14:51+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -2223,6 +2739,232 @@
             "time": "2024-09-09T07:06:30+00:00"
         },
         {
+            "name": "openai-php/client",
+            "version": "v0.19.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openai-php/client.git",
+                "reference": "12e3513527e22d5657f4f9809796f8fe254fd0a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/12e3513527e22d5657f4f9809796f8fe254fd0a9",
+                "reference": "12e3513527e22d5657f4f9809796f8fe254fd0a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2.0",
+                "php-http/discovery": "^1.20.0",
+                "php-http/multipart-stream-builder": "^1.4.2",
+                "psr/http-client": "^1.0.3",
+                "psr/http-client-implementation": "^1.0.1",
+                "psr/http-factory-implementation": "*",
+                "psr/http-message": "^1.1.0|^2.0.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.10.0",
+                "guzzlehttp/psr7": "^2.8.0",
+                "laravel/pint": "^1.25.1",
+                "mockery/mockery": "^1.6.12",
+                "nunomaduro/collision": "^8.8.3",
+                "pestphp/pest": "^3.8.2|^4.1.4",
+                "pestphp/pest-plugin-arch": "^3.1.1|^4.0.0",
+                "pestphp/pest-plugin-type-coverage": "^3.5.1|^4.0.0",
+                "phpstan/phpstan": "^1.12.32",
+                "symfony/var-dumper": "^7.3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/OpenAI.php"
+                ],
+                "psr-4": {
+                    "OpenAI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nuno Maduro",
+                    "email": "enunomaduro@gmail.com"
+                },
+                {
+                    "name": "Sandro Gehri"
+                }
+            ],
+            "description": "OpenAI PHP is a supercharged PHP API client that allows you to interact with the Open AI API",
+            "keywords": [
+                "GPT-3",
+                "api",
+                "client",
+                "codex",
+                "dall-e",
+                "language",
+                "natural",
+                "openai",
+                "php",
+                "processing",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/openai-php/client/issues",
+                "source": "https://github.com/openai-php/client/tree/v0.19.2"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/paypalme/enunomaduro",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/gehrisandro",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nunomaduro",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-19T20:35:01+00:00"
+        },
+        {
+            "name": "php-http/discovery",
+            "version": "1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0|^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "nyholm/psr7": "<1.0",
+                "zendframework/zend-diactoros": "*"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "*",
+                "psr/http-factory-implementation": "*",
+                "psr/http-message-implementation": "*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0.2|^2.0",
+                "graham-campbell/phpspec-skip-example-extension": "^5.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^5.1 || ^6.1 || ^7.3",
+                "sebastian/comparator": "^3.0.5 || ^4.0.8",
+                "symfony/phpunit-bridge": "^6.4.4 || ^7.0.1"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Http\\Discovery\\Composer\\Plugin",
+                "plugin-optional": true
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Discovery\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/Composer/Plugin.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Finds and installs PSR-7, PSR-17, PSR-18 and HTTPlug implementations",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "adapter",
+                "client",
+                "discovery",
+                "factory",
+                "http",
+                "message",
+                "psr17",
+                "psr7"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/discovery/issues",
+                "source": "https://github.com/php-http/discovery/tree/1.20.0"
+            },
+            "time": "2024-10-02T11:20:13+00:00"
+        },
+        {
+            "name": "php-http/multipart-stream-builder",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/multipart-stream-builder.git",
+                "reference": "10086e6de6f53489cca5ecc45b6f468604d3460e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/multipart-stream-builder/zipball/10086e6de6f53489cca5ecc45b6f468604d3460e",
+                "reference": "10086e6de6f53489cca5ecc45b6f468604d3460e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0",
+                "php-http/discovery": "^1.15",
+                "psr/http-factory-implementation": "^1.0"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.0",
+                "php-http/message": "^1.5",
+                "php-http/message-factory": "^1.0.2",
+                "phpunit/phpunit": "^7.5.15 || ^8.5 || ^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Http\\Message\\MultipartStream\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com"
+                }
+            ],
+            "description": "A builder class that help you create a multipart stream",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "factory",
+                "http",
+                "message",
+                "multipart stream",
+                "stream"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/multipart-stream-builder/issues",
+                "source": "https://github.com/php-http/multipart-stream-builder/tree/1.4.2"
+            },
+            "time": "2024-09-04T13:22:54+00:00"
+        },
+        {
             "name": "phpoption/phpoption",
             "version": "1.9.3",
             "source": {
@@ -2446,6 +3188,58 @@
                 "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
             "time": "2021-11-05T16:47:00+00:00"
+        },
+        {
+            "name": "psr/http-client",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-client.git",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https://github.com/php-fig/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-client"
+            },
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -3631,16 +4425,16 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.6.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "63afe740e99a13ba87ec199bb07bbdee937a5b62"
+                "reference": "feb1edf4e546af3b85c5caebe8359a20db230ca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/63afe740e99a13ba87ec199bb07bbdee937a5b62",
-                "reference": "63afe740e99a13ba87ec199bb07bbdee937a5b62",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/feb1edf4e546af3b85c5caebe8359a20db230ca3",
+                "reference": "feb1edf4e546af3b85c5caebe8359a20db230ca3",
                 "shasum": ""
             },
             "require": {
@@ -3653,7 +4447,7 @@
                     "name": "symfony/contracts"
                 },
                 "branch-alias": {
-                    "dev-main": "3.6-dev"
+                    "dev-main": "3.8-dev"
                 }
             },
             "autoload": {
@@ -3678,7 +4472,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.6.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -3690,11 +4484,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:21:43+00:00"
+            "time": "2026-09-16T14:15:10+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -3827,17 +4625,200 @@
             "time": "2024-12-30T19:00:26+00:00"
         },
         {
-            "name": "symfony/polyfill-ctype",
-            "version": "v1.32.0",
+            "name": "symfony/http-client",
+            "version": "v7.4.23",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "a3cc8b044a6ea513310cbd48ef7333b384945638"
+                "url": "https://github.com/symfony/http-client.git",
+                "reference": "ed012bfca0f7b45d97016efcdf9b0639c52a1722"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/a3cc8b044a6ea513310cbd48ef7333b384945638",
-                "reference": "a3cc8b044a6ea513310cbd48ef7333b384945638",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/ed012bfca0f7b45d97016efcdf9b0639c52a1722",
+                "reference": "ed012bfca0f7b45d97016efcdf9b0639c52a1722",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "psr/log": "^1|^2|^3",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/http-client-contracts": "~3.4.4|^3.5.2",
+                "symfony/polyfill-php83": "^1.29",
+                "symfony/service-contracts": "^2.5|^3"
+            },
+            "conflict": {
+                "amphp/amp": "<2.5",
+                "amphp/socket": "<1.1",
+                "php-http/discovery": "<1.15",
+                "symfony/http-foundation": "<6.4"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "1.0",
+                "symfony/http-client-implementation": "3.0"
+            },
+            "require-dev": {
+                "amphp/http-client": "^4.2.1|^5.0",
+                "amphp/http-tunnel": "^1.0|^2.0",
+                "guzzlehttp/promises": "^1.4|^2.0",
+                "nyholm/psr7": "^1.0",
+                "php-http/httplug": "^1.0|^2.0",
+                "psr/http-client": "^1.0",
+                "symfony/amphp-http-client-meta": "^1.0|^2.0",
+                "symfony/cache": "^6.4|^7.0|^8.0",
+                "symfony/dependency-injection": "^6.4|^7.0|^8.0",
+                "symfony/http-kernel": "^6.4|^7.0|^8.0",
+                "symfony/messenger": "^6.4|^7.0|^8.0",
+                "symfony/process": "^6.4|^7.0|^8.0",
+                "symfony/rate-limiter": "^6.4|^7.0|^8.0",
+                "symfony/stopwatch": "^6.4|^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\HttpClient\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides powerful methods to fetch HTTP resources synchronously or asynchronously",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "http"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/http-client/tree/v7.4.23"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-11-04T08:27:22+00:00"
+        },
+        {
+            "name": "symfony/http-client-contracts",
+            "version": "v3.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-client-contracts.git",
+                "reference": "f9f94260f787446c6fd430b2ae1969fe41ae1ba8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/f9f94260f787446c6fd430b2ae1969fe41ae1ba8",
+                "reference": "f9f94260f787446c6fd430b2ae1969fe41ae1ba8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
+                "branch-alias": {
+                    "dev-main": "3.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\HttpClient\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Test/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to HTTP clients",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/http-client-contracts/tree/v3.8.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-10-04T15:04:25+00:00"
+        },
+        {
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.37.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "141046a8f9477948ff284fa65be2095baafb94f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/141046a8f9477948ff284fa65be2095baafb94f2",
+                "reference": "141046a8f9477948ff284fa65be2095baafb94f2",
                 "shasum": ""
             },
             "require": {
@@ -3887,7 +4868,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.37.0"
             },
             "funding": [
                 {
@@ -3899,11 +4880,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T11:45:10+00:00"
+            "time": "2026-04-10T16:19:22+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -4147,16 +5132,16 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.32.0",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
+                "reference": "9c6a5d6b01ca51d486c813e9a9c0ed55f208bb74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/9c6a5d6b01ca51d486c813e9a9c0ed55f208bb74",
+                "reference": "9c6a5d6b01ca51d486c813e9a9c0ed55f208bb74",
                 "shasum": ""
             },
             "require": {
@@ -4207,7 +5192,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -4219,24 +5204,28 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-01-02T08:10:11+00:00"
+            "time": "2026-09-25T15:50:05+00:00"
         },
         {
             "name": "symfony/polyfill-php83",
-            "version": "v1.32.0",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php83.git",
-                "reference": "2fb86d65e2d424369ad2905e83b236a8805ba491"
+                "reference": "80ccff923a8d61f73ebe9da0aa94e25232f004ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php83/zipball/2fb86d65e2d424369ad2905e83b236a8805ba491",
-                "reference": "2fb86d65e2d424369ad2905e83b236a8805ba491",
+                "url": "https://api.github.com/repos/symfony/polyfill-php83/zipball/80ccff923a8d61f73ebe9da0aa94e25232f004ce",
+                "reference": "80ccff923a8d61f73ebe9da0aa94e25232f004ce",
                 "shasum": ""
             },
             "require": {
@@ -4283,7 +5272,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php83/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-php83/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -4295,11 +5284,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T11:45:10+00:00"
+            "time": "2026-09-25T15:50:05+00:00"
         },
         {
             "name": "symfony/process",
@@ -4624,16 +5617,16 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.6.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "f021b05a130d35510bd6b25fe9053c2a8a15d5d4"
+                "reference": "052852a96fd5e5ebdb617dba22031e41a3300fb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/f021b05a130d35510bd6b25fe9053c2a8a15d5d4",
-                "reference": "f021b05a130d35510bd6b25fe9053c2a8a15d5d4",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/052852a96fd5e5ebdb617dba22031e41a3300fb5",
+                "reference": "052852a96fd5e5ebdb617dba22031e41a3300fb5",
                 "shasum": ""
             },
             "require": {
@@ -4651,7 +5644,7 @@
                     "name": "symfony/contracts"
                 },
                 "branch-alias": {
-                    "dev-main": "3.6-dev"
+                    "dev-main": "3.8-dev"
                 }
             },
             "autoload": {
@@ -4687,7 +5680,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.6.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -4699,11 +5692,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-25T09:37:31+00:00"
+            "time": "2026-10-20T17:38:25+00:00"
         },
         {
             "name": "symfony/string",
@@ -5130,16 +6127,92 @@
             "time": "2025-06-27T19:55:54+00:00"
         },
         {
+            "name": "symfony/yaml",
+            "version": "v7.4.23",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "1e601207ffe627a2e621faa9d661f1d32dcf1cec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/1e601207ffe627a2e621faa9d661f1d32dcf1cec",
+                "reference": "1e601207ffe627a2e621faa9d661f1d32dcf1cec",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "conflict": {
+                "symfony/console": "<6.4"
+            },
+            "require-dev": {
+                "symfony/console": "^6.4|^7.0|^8.0"
+            },
+            "bin": [
+                "Resources/bin/yaml-lint"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Loads and dumps YAML files",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/yaml/tree/v7.4.23"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-11-04T08:27:22+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v5.6.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
+                "url": "https://github.com/phpdotenv/phpdotenv.git",
                 "reference": "24ac4c74f91ee2c193fa1aaa5c249cb0822809af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/24ac4c74f91ee2c193fa1aaa5c249cb0822809af",
+                "url": "https://api.github.com/repos/phpdotenv/phpdotenv/zipball/24ac4c74f91ee2c193fa1aaa5c249cb0822809af",
                 "reference": "24ac4c74f91ee2c193fa1aaa5c249cb0822809af",
                 "shasum": ""
             },
@@ -6484,58 +7557,6 @@
             "time": "2025-06-20T11:29:11+00:00"
         },
         {
-            "name": "psr/http-client",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-client.git",
-                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
-                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0 || ^8.0",
-                "psr/http-message": "^1.0 || ^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Client\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for HTTP clients",
-            "homepage": "https://github.com/php-fig/http-client",
-            "keywords": [
-                "http",
-                "http-client",
-                "psr",
-                "psr-18"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/http-client"
-            },
-            "time": "2023-09-23T14:17:50+00:00"
-        },
-        {
             "name": "sebastian/cli-parser",
             "version": "2.0.1",
             "source": {
@@ -7511,7 +8532,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1",
+        "php": ">=8.3 <8.6",
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-pdo": "*"

@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": "^8.1",
+        "php": ">=8.3 <8.6",
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
@@ -45,7 +45,9 @@
         "logtail/monolog-logtail": "^3.1",
         "budgetcontrol/schema-registry-service": "^1.5.1",
         "budgetcontrol/library": "v1.0.1",
-        "bref/bref": "~2.4.1"
+        "bref/bref": "~2.4.1",
+        "byjg/text-classifier": "^6.0",
+        "symfony/http-client": "^7.4"
     },
     "require-dev": {
         "nikic/php-parser": "^5.0",

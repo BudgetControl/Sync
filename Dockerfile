@@ -1,4 +1,4 @@
-FROM mlabfactory/php8-apache:v1.3
+FROM mlabfactory/php8-apache:v1.5.0
 COPY . /var/www/workdir
 COPY bin/apache/default.conf /etc/apache2/sites-available/budgetcontrol.cloud.conf
 WORKDIR /var/www/workdir

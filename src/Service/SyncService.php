@@ -7,6 +7,7 @@ class SyncService
 {
     private EnableBanking $bank;
     private array $categoryKeywords = [];
+    private ?CategoryClassifier $categoryClassifier = null;
     public function __construct(?EnableBanking $bank = null) { $this->bank = $bank ?? new EnableBanking(); }
 
     private function encryptionKey(): string
@@ -212,7 +213,12 @@ class SyncService
             if ($length > $longest) { $matches = []; $longest = $length; }
             if ($length === $longest) $matches[(int) $keyword->category_id] = true;
         }
-        return count($matches) === 1 ? (int) array_key_first($matches) : $fallback;
+        if (count($matches) === 1) {
+            return (int) array_key_first($matches);
+        }
+
+        $type = $direction === 'CRDT' ? 'incoming' : 'expenses';
+        return ($this->categoryClassifier ??= new CategoryClassifier())->classify($note, $type) ?? $fallback;
     }
 
     private function alignBalance(array $context, array $account, int $walletId): bool
