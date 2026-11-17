@@ -82,7 +82,9 @@ class SyncService
     public function connections(array $context): array
     {
         $connections = DB::table('sync_connections')->where('user_uuid', $context['user_uuid'])->where('workspace_id', $context['workspace_id'])->orderBy('id', 'desc')->get();
-        return ['connections' => $connections->map(function ($connection) {
+        $walletIds = DB::table('sync_account_settings')->where('user_uuid', $context['user_uuid'])
+            ->where('workspace_id', $context['workspace_id'])->distinct()->pluck('account_id')->map(fn($id) => (int) $id)->all();
+        return ['wallet_ids' => $walletIds, 'connections' => $connections->map(function ($connection) {
             $accounts = json_decode($connection->accounts_json, true) ?: [];
             return ['id' => $connection->id, 'valid_until' => $connection->valid_until,
                 'accounts' => array_map(fn($a) => ['uid' => $a['uid'], 'name' => $a['name'], 'currency' => $a['currency']], $accounts)];
@@ -186,8 +188,8 @@ class SyncService
             if ($key !== null && (isset($seenKeys[$key]) || count($seenKeys) >= 500)) throw new \RuntimeException('Bank pagination could not be completed', 503);
             if ($key !== null) $seenKeys[$key] = true;
         } while ($key !== null);
-        $this->alignBalance($context, $account, (int) $input['account_id']);
-        return compact('imported', 'duplicates', 'skipped');
+        $balance_updated = $this->alignBalance($context, $account, (int) $input['account_id']);
+        return compact('imported', 'duplicates', 'skipped', 'balance_updated');
     }
 
     private function recognizeCategory(int $workspaceId, string $note, string $direction, int $fallback): int
@@ -213,7 +215,7 @@ class SyncService
         return count($matches) === 1 ? (int) array_key_first($matches) : $fallback;
     }
 
-    private function alignBalance(array $context, array $account, int $walletId): void
+    private function alignBalance(array $context, array $account, int $walletId): bool
     {
         $result = $this->bank->request('GET', '/accounts/' . rawurlencode($account['uid']) . '/balances');
         $selected = null;
@@ -229,10 +231,21 @@ class SyncService
                 }
             }
         }
-        if ($selected === null) throw new \RuntimeException('A current booked bank balance is unavailable', 503);
+        if ($selected === null) {
+            // Log only balance metadata to diagnose provider differences without exposing amounts or account data.
+            $metadata = array_map(fn($balance) => [
+                'type' => $balance['balance_type'] ?? null,
+                'reference_date' => $balance['reference_date'] ?? null,
+                'currency_matches' => ($balance['balance_amount']['currency'] ?? '') === $account['currency'],
+                'amount_is_string' => is_string($balance['balance_amount']['amount'] ?? null),
+            ], $result['balances'] ?? []);
+            error_log('Bank balance unavailable: ' . json_encode($metadata));
+            return false;
+        }
         $updated = DB::table('wallets')->where('id', $walletId)->where('workspace_id', $context['workspace_id'])
             ->whereNull('deleted_at')->update(['balance' => $selected]);
         if (!$updated) throw new \RuntimeException('Unable to update wallet balance', 503);
+        return true;
     }
 
     public function runScheduled(): array
@@ -241,8 +254,12 @@ class SyncService
         foreach (DB::table('sync_account_settings')->orderBy('id')->get() as $setting) {
             $results['workspace_ids'][(int) $setting->workspace_id] = (int) $setting->workspace_id;
             try {
-                $this->sync(['user_uuid' => $setting->user_uuid, 'workspace_id' => $setting->workspace_id], (array) $setting);
-                $results['processed']++;
+                $sync = $this->sync(['user_uuid' => $setting->user_uuid, 'workspace_id' => $setting->workspace_id], (array) $setting);
+                if ($sync['balance_updated']) $results['processed']++;
+                else {
+                    $results['failed']++;
+                    error_log('Scheduled sync could not align balance for setting ' . (int) $setting->id);
+                }
             } catch (\Throwable $e) {
                 $results['failed']++;
                 error_log('Scheduled sync failed for setting ' . (int) $setting->id . ': ' . get_class($e));
