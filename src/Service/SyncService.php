@@ -28,7 +28,7 @@ class SyncService
     {
         $data = $this->bank->request('GET', '/aspsps', ['country' => 'IT', 'service' => 'AIS']);
         return ['banks' => array_values(array_map(fn($bank) => ['name' => $bank['name'], 'country' => $bank['country'], 'maximum_consent_validity' => $bank['maximum_consent_validity'] ?? null],
-            array_filter($data['aspsps'] ?? [], fn($bank) => isset($bank['name']) && preg_match('/credem|credito emiliano|bbva/i', $bank['name']))))];
+            array_filter($data['aspsps'] ?? [], fn($bank) => isset($bank['name']) && preg_match('/credem|credito emiliano|bbva|revolut/i', $bank['name']))))];
     }
 
     public function start(array $context, array $input): array
