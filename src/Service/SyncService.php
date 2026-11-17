@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 class SyncService
 {
     private EnableBanking $bank;
+    private array $categoryKeywords = [];
     public function __construct(?EnableBanking $bank = null) { $this->bank = $bank ?? new EnableBanking(); }
 
     private function encryptionKey(): string
@@ -90,6 +91,23 @@ class SyncService
 
     public function sync(array $context, array $input): array
     {
+        $walletId = filter_var($input['account_id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if ($walletId === false) throw new \InvalidArgumentException('Select a wallet', 422);
+        $locked = false;
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            $value = DB::selectOne('SELECT pg_try_advisory_lock(193687, ?) AS locked', [$walletId])->locked;
+            $locked = in_array($value, [true, 1, '1', 't'], true);
+            if (!$locked) throw new \RuntimeException('A synchronization is already running for this wallet', 409);
+        }
+        try {
+            return $this->syncAccount($context, $input);
+        } finally {
+            if ($locked) DB::selectOne('SELECT pg_advisory_unlock(193687, ?)', [$walletId]);
+        }
+    }
+
+    private function syncAccount(array $context, array $input): array
+    {
         $connection = DB::table('sync_connections')->where('user_uuid', $context['user_uuid'])->where('workspace_id', $context['workspace_id'])->where('id', $input['connection_id'] ?? 0)->first();
         if (!$connection) throw new \InvalidArgumentException('Connection not found', 404);
         if ($connection->valid_until && strtotime($connection->valid_until . ' UTC') <= time()) throw new \RuntimeException('Bank consent expired; reconnect', 409);
@@ -97,7 +115,8 @@ class SyncService
         $account = null;
         foreach ($accounts as $candidate) if ($candidate['uid'] === ($input['account_uid'] ?? null)) $account = $candidate;
         if (!$account) throw new \InvalidArgumentException('Account not found', 404);
-        foreach (['account_id', 'category_id', 'currency_id', 'payment_type'] as $field) {
+        $input['income_category_id'] = $input['income_category_id'] ?? $input['category_id'] ?? null;
+        foreach (['account_id', 'category_id', 'income_category_id', 'currency_id', 'payment_type'] as $field) {
             if (filter_var($input[$field] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) throw new \InvalidArgumentException('Select all expense settings', 422);
         }
         $selectedCurrency = DB::table('currencies')->where('id', (int) $input['currency_id'])->value('label');
@@ -107,6 +126,37 @@ class SyncService
         $from = $input['date_from'] ?? '';
         $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $from);
         if (!$date || $date->format('Y-m-d') !== $from || $from > gmdate('Y-m-d')) throw new \InvalidArgumentException('Select a valid starting date', 422);
+        foreach (['category_id', 'income_category_id'] as $field) {
+            if (!DB::table('sub_categories')->where('id', (int) $input[$field])->whereNull('deleted_at')->exists()) {
+                throw new \InvalidArgumentException('Select a valid category', 422);
+            }
+        }
+        DB::connection()->transaction(function () use ($context, $input, $connection, $account, $from) {
+        $other = DB::table('sync_account_settings')->where('workspace_id', $context['workspace_id'])
+            ->where('account_id', $input['account_id'])
+            ->where(function ($q) use ($connection, $account) {
+                $q->where('connection_id', '!=', $connection->id)->orWhere('account_uid', '!=', $account['uid']);
+            })->first();
+        if ($other) {
+            $oldConnection = DB::table('sync_connections')->where('id', $other->connection_id)
+                ->where('user_uuid', $context['user_uuid'])->where('workspace_id', $context['workspace_id'])->first();
+            $oldAccounts = $oldConnection ? (json_decode($oldConnection->accounts_json, true) ?: []) : [];
+            $sameAccount = false;
+            foreach ($oldAccounts as $oldAccount) {
+                if (($oldAccount['uid'] ?? null) === $other->account_uid
+                    && ($oldAccount['identification_hash'] ?? null) === $account['identification_hash']) $sameAccount = true;
+            }
+            if (!$sameAccount) throw new \InvalidArgumentException('Wallet is already linked to another bank account', 409);
+            DB::table('sync_account_settings')->where('id', $other->id)->delete();
+        }
+        DB::table('sync_account_settings')->updateOrInsert(
+            ['connection_id' => $connection->id, 'account_uid' => $account['uid']],
+            ['user_uuid' => $context['user_uuid'], 'workspace_id' => $context['workspace_id'],
+             'account_id' => (int) $input['account_id'], 'category_id' => (int) $input['category_id'],
+             'income_category_id' => (int) $input['income_category_id'], 'currency_id' => (int) $input['currency_id'],
+             'payment_type' => (int) $input['payment_type'], 'date_from' => $from, 'updated_at' => gmdate('Y-m-d H:i:s')]
+        );
+        });
         $params = ['date_from' => $from, 'transaction_status' => 'BOOK'];
         $key = null; $seenKeys = []; $imported = 0; $duplicates = 0; $skipped = 0;
         do {
@@ -114,7 +164,8 @@ class SyncService
             if ($key !== null) $query['continuation_key'] = $key;
             $page = $this->bank->request('GET', '/accounts/' . rawurlencode($account['uid']) . '/transactions', $query);
             foreach (($page['transactions'] ?? []) as $tx) {
-                if (($tx['status'] ?? '') !== 'BOOK' || ($tx['credit_debit_indicator'] ?? '') !== 'DBIT') continue;
+                $direction = $tx['credit_debit_indicator'] ?? '';
+                if (($tx['status'] ?? '') !== 'BOOK' || !in_array($direction, ['DBIT', 'CRDT'], true)) continue;
                 $reference = $tx['entry_reference'] ?? '';
                 $amount = $tx['transaction_amount']['amount'] ?? '';
                 $currency = $tx['transaction_amount']['currency'] ?? '';
@@ -122,9 +173,11 @@ class SyncService
                 if (!$reference || !is_numeric($amount) || (float)$amount == 0 || !$booking || !$account['currency'] || $currency !== $account['currency']) { $skipped++; continue; }
                 $sourceHash = hash('sha256', json_encode(['enablebanking', $account['identification_hash'], (string) $reference]));
                 $note = implode(' ', array_filter($tx['remittance_information'] ?? []));
-                if ($note === '') $note = $tx['creditor']['name'] ?? 'Bank transaction';
-                $expense = ['source_hash' => $sourceHash, 'date_time' => $booking . ' 12:00:00', 'amount' => '-' . ltrim((string)$amount, '-+'),
-                    'note' => mb_substr($note, 0, 255), 'account_id' => (int)$input['account_id'], 'category_id' => (int)$input['category_id'],
+                if ($note === '') $note = $tx['creditor']['name'] ?? $tx['debtor']['name'] ?? $tx['bank_transaction_code']['description'] ?? 'Bank transaction';
+                $defaultCategory = (int) $input[$direction === 'CRDT' ? 'income_category_id' : 'category_id'];
+                $category = $this->recognizeCategory($context['workspace_id'], $note, $direction, $defaultCategory);
+                $expense = ['source_hash' => $sourceHash, 'date_time' => $booking . ' 12:00:00', 'amount' => ($direction === 'DBIT' ? '-' : '') . ltrim((string)$amount, '-+'),
+                    'note' => mb_substr($note, 0, 255), 'account_id' => (int)$input['account_id'], 'category_id' => $category,
                     'currency_id' => (int)$input['currency_id'], 'payment_type' => (int)$input['payment_type']];
                 $result = $this->importExpense($context['workspace_id'], $expense);
                 if ($result === 'created') $imported++; else $duplicates++;
@@ -133,7 +186,70 @@ class SyncService
             if ($key !== null && (isset($seenKeys[$key]) || count($seenKeys) >= 500)) throw new \RuntimeException('Bank pagination could not be completed', 503);
             if ($key !== null) $seenKeys[$key] = true;
         } while ($key !== null);
+        $this->alignBalance($context, $account, (int) $input['account_id']);
         return compact('imported', 'duplicates', 'skipped');
+    }
+
+    private function recognizeCategory(int $workspaceId, string $note, string $direction, int $fallback): int
+    {
+        // Learn only from manually created entries; never amplify guesses made by sync itself.
+        $cacheKey = $workspaceId . ':' . $direction;
+        if (!isset($this->categoryKeywords[$cacheKey])) $this->categoryKeywords[$cacheKey] = DB::table('entries_keywords as k')
+            ->join('entries as e', 'e.id', '=', 'k.entry_id')
+            ->leftJoin('sync_imported_expenses as imported', function ($join) {
+                $join->on('imported.entry_uuid', '=', 'e.uuid')->on('imported.workspace_id', '=', 'e.workspace_id');
+            })
+            ->where('e.workspace_id', $workspaceId)->where('e.type', $direction === 'CRDT' ? 'incoming' : 'expenses')
+            ->whereNull('e.deleted_at')->whereNull('imported.entry_uuid')
+            ->orderByDesc('e.id')->limit(1000)->get(['k.keyword', 'e.category_id']);
+        $matches = []; $longest = 0;
+        foreach ($this->categoryKeywords[$cacheKey] as $keyword) {
+            $phrase = trim((string) $keyword->keyword);
+            $length = mb_strlen($phrase);
+            if ($length < 5 || !preg_match('/(?<![\pL\pN])' . preg_quote($phrase, '/') . '(?![\pL\pN])/iu', $note)) continue;
+            if ($length > $longest) { $matches = []; $longest = $length; }
+            if ($length === $longest) $matches[(int) $keyword->category_id] = true;
+        }
+        return count($matches) === 1 ? (int) array_key_first($matches) : $fallback;
+    }
+
+    private function alignBalance(array $context, array $account, int $walletId): void
+    {
+        $result = $this->bank->request('GET', '/accounts/' . rawurlencode($account['uid']) . '/balances');
+        $selected = null;
+        foreach (['ITBD', 'CLBD', 'ITAV', 'CLAV'] as $type) {
+            foreach ($result['balances'] ?? [] as $balance) {
+                $amount = $balance['balance_amount']['amount'] ?? '';
+                $currency = $balance['balance_amount']['currency'] ?? '';
+                if (($balance['balance_type'] ?? '') === $type && $currency === $account['currency']
+                    && is_string($amount) && preg_match('/^-?\d+(?:\.\d{1,2})?$/', $amount)
+                    && (empty($balance['reference_date']) || $balance['reference_date'] >= gmdate('Y-m-d'))) {
+                    $selected = $amount;
+                    break 2;
+                }
+            }
+        }
+        if ($selected === null) throw new \RuntimeException('A current booked bank balance is unavailable', 503);
+        $updated = DB::table('wallets')->where('id', $walletId)->where('workspace_id', $context['workspace_id'])
+            ->whereNull('deleted_at')->update(['balance' => $selected]);
+        if (!$updated) throw new \RuntimeException('Unable to update wallet balance', 503);
+    }
+
+    public function runScheduled(): array
+    {
+        $results = ['processed' => 0, 'failed' => 0, 'workspace_ids' => []];
+        foreach (DB::table('sync_account_settings')->orderBy('id')->get() as $setting) {
+            $results['workspace_ids'][(int) $setting->workspace_id] = (int) $setting->workspace_id;
+            try {
+                $this->sync(['user_uuid' => $setting->user_uuid, 'workspace_id' => $setting->workspace_id], (array) $setting);
+                $results['processed']++;
+            } catch (\Throwable $e) {
+                $results['failed']++;
+                error_log('Scheduled sync failed for setting ' . (int) $setting->id . ': ' . get_class($e));
+            }
+        }
+        $results['workspace_ids'] = array_values($results['workspace_ids']);
+        return $results;
     }
 
     protected function importExpense(int $workspaceId, array $expense): string
